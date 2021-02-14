@@ -1,25 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { NewNoteInput } from "./components/NewNoteInput";
+import { useSelector, useDispatch } from "react-redux";
+import { NotesState, saveNotes, loadNotes } from "./store/notesReducer";
+import { addNote } from "./store/notesActions";
 
 function App() {
+  const [notes, isLoading] = useSelector((state: NotesState) => [
+    state.notes,
+    state.isLoading,
+  ]);
+  const dispatch = useDispatch();
+
+  const onAddNote = (note: string): void => {
+    dispatch(addNote(note));
+  };
+
+  const onSave = (): void => {
+    dispatch(saveNotes());
+  };
+
+  const onLoad = (): void => {
+    dispatch(loadNotes());
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NewNoteInput addNote={onAddNote} />
+      <hr />
+      <ul>
+        {notes.map((note: string, idx: number) => (
+          <li key={idx}>{note}</li>
+        ))}
+      </ul>
+      <hr />
+      <button onClick={onSave}>Save</button>
+      <button onClick={onLoad}>Load</button>
+      {isLoading ? <p>Loading...</p> : null}
+    </>
   );
 }
 
